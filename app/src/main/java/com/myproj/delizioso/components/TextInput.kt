@@ -17,6 +17,7 @@ fun TextInput(
     header: String,
     textFieldValue: String,
     secureText: Boolean = false,
+    enabled: Boolean = true,
     onTextFieldChange: (String) -> Unit
 ) {
     Column(modifier = modifier) {
@@ -32,6 +33,7 @@ fun TextInput(
                 .height(50.dp),
             value = textFieldValue,
             placeholder = header,
+            enabled = enabled,
             secureText = secureText,
             onValueChange = onTextFieldChange
         )

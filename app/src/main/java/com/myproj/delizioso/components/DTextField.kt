@@ -21,11 +21,13 @@ fun DTextField(
     value: String,
     placeholder: String,
     secureText: Boolean = false,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit
 ) {
     TextField(
         modifier = modifier,
         value = value,
+        enabled = enabled,
         placeholder = {
             Text(
                 modifier = Modifier.padding(start = 10.dp),
@@ -49,17 +51,5 @@ fun DTextField(
             VisualTransformation.None,
         onValueChange = onValueChange
 
-    )
-}
-
-@Composable
-@Preview(showBackground = true)
-fun DTextFieldPreview() {
-    DTextField(
-        value = "Maryan",
-        placeholder = "First Name",
-        onValueChange = {
-
-        }
     )
 }

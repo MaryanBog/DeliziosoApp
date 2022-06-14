@@ -34,15 +34,23 @@ fun SignInView(
             modifier = Modifier.padding(top = 50.dp),
             header = stringResource(id = R.string.email_hint),
             textFieldValue = viewState.emailValue,
-            onTextFieldChange = onLoginFieldChange
+            enabled = !viewState.isProgress,
+            onTextFieldChange = {
+                if (!viewState.isProgress)
+                    onLoginFieldChange.invoke(it)
+            }
         )
 
         TextInput(
             modifier = Modifier.padding(top = 30.dp),
             header = stringResource(id = R.string.password_hint),
             textFieldValue = viewState.passwordValue,
+            enabled = !viewState.isProgress,
             secureText = true,
-            onTextFieldChange = onPasswordFieldChange
+            onTextFieldChange = {
+                if (!viewState.isProgress)
+                    onPasswordFieldChange.invoke(it)
+            }
         )
 
         Row(
@@ -52,6 +60,7 @@ fun SignInView(
             Checkbox(
                 checked = viewState.rememberMeChecked,
                 onCheckedChange = onCheckedChange,
+                enabled = !viewState.isProgress,
                 colors = CheckboxDefaults.colors(
                     checkedColor = AppTheme.color.primaryTintColor,
                     uncheckedColor = AppTheme.color.borderColor
@@ -63,7 +72,7 @@ fun SignInView(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                modifier = Modifier.clickable(onClick = onForgetClick),
+                modifier = if (viewState.isProgress) Modifier else Modifier.clickable(onClick = onForgetClick),
                 text = stringResource(id = R.string.sing_in_forget)
             )
         }
@@ -73,17 +82,29 @@ fun SignInView(
                 .padding(top = 30.dp)
                 .fillMaxWidth()
                 .height(60.dp),
-            onClick = onLoginClick,
+            onClick = {
+                if (!viewState.isProgress)
+                    onLoginClick.invoke()
+            },
             shape = RoundedCornerShape(size = 10.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = AppTheme.color.primaryTintColor
             )
         ) {
-            Text(
-                text = stringResource(id = R.string.action_login),
-                fontWeight = FontWeight.Medium,
-                color = AppTheme.color.primaryTextInvertColor
-            )
+            if (viewState.isProgress) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = AppTheme.color.primaryTextInvertColor
+                )
+            } else {
+                Text(
+                    text = stringResource(id = R.string.action_login),
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.color.primaryTextInvertColor
+                )
+            }
+
         }
 
         Text(

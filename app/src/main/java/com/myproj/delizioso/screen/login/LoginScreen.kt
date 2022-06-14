@@ -1,10 +1,12 @@
 package com.myproj.delizioso.screen.login
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -12,7 +14,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.myproj.delizioso.R
+import com.myproj.delizioso.navigation.NavigationTree
+import com.myproj.delizioso.screen.login.models.LoginAction
 import com.myproj.delizioso.screen.login.models.LoginEvent
 import com.myproj.delizioso.screen.login.models.LoginSubState
 import com.myproj.delizioso.screen.login.models.LoginViewState
@@ -24,7 +29,8 @@ import com.myproj.delizioso.ui.theme.AppTheme
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    navController: NavController
 ) {
     val viewState = loginViewModel.viewState.observeAsState(LoginViewState())
 
@@ -88,13 +94,13 @@ fun LoginScreen(
                             loginViewModel.obtainEvent(LoginEvent.PasswordChanged(it))
                         },
                         onCheckedChange = {
-                            loginViewModel.obtainEvent(LoginEvent.CheckBoxClick(it))
+                            loginViewModel.obtainEvent(LoginEvent.CheckBoxClicked(it))
                         },
                         onForgetClick = {
-                            loginViewModel.obtainEvent(LoginEvent.ForgetClick)
+                            loginViewModel.obtainEvent(LoginEvent.ForgetClicked)
                         },
                         onLoginClick = {
-
+                            loginViewModel.obtainEvent(LoginEvent.LoginClicked)
                         }
                     )
                     LoginSubState.SignUp -> SignUpView()
@@ -102,5 +108,14 @@ fun LoginScreen(
                 }
             }
         }
+    }
+    LaunchedEffect(key1 = viewState.value.loginAction) {
+        Log.d("Delizioso", "${viewState.value.loginAction}")
+        when (val action = viewState.value.loginAction) {
+            is LoginAction.OpenDashboard ->
+                navController.navigate("${NavigationTree.Main.name}/${action.username}")
+            else -> {}
+        }
+        loginViewModel.obtainEvent(LoginEvent.LoginActionInvoked)
     }
 }
